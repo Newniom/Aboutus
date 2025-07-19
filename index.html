@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Newniom Simple</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      overflow-x: hidden;
+      background-color: #fffdf9ea;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fffdf9ea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #d4a373;
+      border-top: 3px solid transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .content-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      align-items: flex-start;
+      max-width: 1200px;
+      margin: auto;
+      opacity: 0;
+      transition: opacity 1s ease;
+      padding: 60px 30px;
+    }
+
+    .image-side {
+      flex: 1;
+      min-width: 280px;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1.2s ease;
+    }
+
+    .image-side img {
+      width: 100%;
+      max-width: 420px;
+      height: auto;
+      display: block;
+      object-fit: contain;
+    }
+
+    .text-section {
+      flex: 2;
+      max-width: 600px;
+      font-size: 18px;
+      color: #222;
+      line-height: 1.8;
+    }
+
+    .text-block {
+      margin-bottom: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .word {
+      opacity: 0;
+      transform: translateY(8px);
+      display: inline-block;
+      transition: all 0.4s ease;
+    }
+
+    .word.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 800px) {
+      .content-wrapper {
+        flex-direction: column;
+        align-items: center;
+        padding: 30px 20px;
+      }
+      .text-section {
+        font-size: 16px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loader -->
+  <div id="loader">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- content -->
+  <div class="content-wrapper" id="mainContent">
+    <div class="image-side" id="imageSide">
+      <img id="mainImage" src="https://uploadkon.ir/uploads/1d9818_2520250718-230228.png" alt="Newniom Image" />
+    </div>
+    <div class="text-section" id="text-section"></div>
+  </div>
+
+  <script>
+    const paragraphs = [
+      `Newniom✌️ is a proud tech team based in Iran, a country rich in history, culture, and innovation. Located in Western Asia, Iran is known for its breathtaking landscapes, vibrant cities, and deep-rooted contributions to science and civilization.`,
+      `Founded on May 20, 2024, by Mehdi Daryanavard, Newniom was created with a vision to become a reliable source of knowledge and insight for technology enthusiasts and IT professionals. Our mission is to foster a community that bridges curiosity with expertise, offering a platform for growth, learning, and collaboration.`,
+      `We aim to inspire, support, and connect those passionate about the future of technology—both in Iran and around the globe.`
+    ];
+
+    const image = document.getElementById("mainImage");
+    const contentWrapper = document.getElementById("mainContent");
+    const imageSide = document.getElementById("imageSide");
+    const textSection = document.getElementById("text-section");
+
+    image.onload = () => {
+      document.getElementById("loader").style.opacity = 0;
+      setTimeout(() => {
+        document.getElementById("loader").style.display = "none";
+      }, 600);
+
+      imageSide.style.opacity = 1;
+      imageSide.style.transform = "translateY(0)";
+      contentWrapper.style.opacity = 1;
+      showParagraph();
+    };
+
+    let paragraphIndex = 0;
+
+    function showParagraph() {
+      if (paragraphIndex >= paragraphs.length) return;
+
+      const block = document.createElement("div");
+      block.className = "text-block";
+      textSection.appendChild(block);
+
+      const words = paragraphs[paragraphIndex].split(" ");
+      words.forEach((word, i) => {
+        const span = document.createElement("span");
+        span.className = "word";
+        span.textContent = word;
+        block.appendChild(span);
+        setTimeout(() => {
+          span.classList.add("visible");
+        }, i * 60);
+      });
+
+      block.scrollIntoView({ behavior: "smooth", block: "center" });
+      paragraphIndex++;
+      setTimeout(showParagraph, words.length * 60 + 1000);
+    }
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          imageSide.style.opacity = 1;
+          imageSide.style.transform = "translateY(0)";
+        }
+      });
+    }, { threshold: 0.5 });
+
+    observer.observe(imageSide);
+  </script>
+</body>
+</html>
